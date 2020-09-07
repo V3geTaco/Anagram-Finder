@@ -3,7 +3,10 @@
 
 using namespace std;
 
-class Avl {
-    public:
-    private:
+void Avl::rightRotation() {
+
+}
+
+void Avl::leftRotation() {
+    
 }

@@ -1,8 +1,12 @@
 #ifndef AVL_H
 #define AVL_H
 
-// void Avl::function() {
+class Avl {
+    private:
 
-// }
+    public:
+        void rightRotation();
+        void leftRotation();
+};
 
 #endif
