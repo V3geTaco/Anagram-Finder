@@ -1,32 +1,39 @@
 #include <iostream>
 #include <cctype>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 #include "avl.h"
 
-struct Node {
-   int  data;
-   int  height;
-   Tree left, right;
+#ifndef NULL_PTR
+#define NULL_PTR ((void *)0)
+
+typedef struct node *Node;
+
+struct node {
+    char *data;
+    int  height;
+    Node left;
+    Node right;
 };
 
-struct Tree {
-   Node root;
+struct tree {
+    Node root;
 };
 
 using namespace std;
 
 Tree Avl::newTree(void) {
-   return NULL;
+   return NULL_PTR;
 }
 
-Tree Avl::rightRotation(Tree n) {
-   if (n != NULL || n->left == NULL) {
+Node Avl::rightRotation(Node n) {
+   if (n != NULL_PTR || n->left == NULL_PTR) {
       return n;
    }
 
-   Tree tmp = n->left;
+   Node tmp = n->left;
    n->right = tmp->left;
    tmp->left = n;
 
@@ -36,24 +43,39 @@ Tree Avl::rightRotation(Tree n) {
    return tmp;
 }
 
-Tree Avl::leftRotation(Tree n) {
-    // similar to right rotation
-    // not finished
-    return NULL;
+Node Avl::leftRotation(Node n) {
+   if (n != NULL_PTR || n->right == NULL_PTR) {
+      return n;
+   }
+
+   Node tmp = n->right;
+   n->left = tmp->right;
+   tmp->right = n;
+
+   n->height = max(height(n->left), height(n->right));
+   tmp->height = max(height(tmp->left), height(tmp->right));
+
+   return tmp;
 }
 
- void Avl::freeTree(Tree t) {
-    if (t != NULL) {
-       freeTree(t->left);
-       freeTree(t->right);
-       free(t);
+ void Avl::freeTree(Node n) {
+    if (n != NULL_PTR) {
+       freeTree(n->left);
+       freeTree(n->right);
+       free(n);
     }
  }
 
-static int Avl::height() {
-
+int Avl::height(Node n) {
+   if (n == NULL_PTR) {
+      return -1;
+   } else {
+      return n->height;
+   }
 }
 
-static int Avl::max(int x, int y) {
+int Avl::max(int x, int y) {
    return (x >= y) ? x : y;
 }
+
+#endif

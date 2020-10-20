@@ -1,19 +1,19 @@
 #ifndef AVL_H
 #define AVL_H
 
-typedef struct Node *Tree;
+typedef struct tree *Tree;
 
 class Avl {
     private:
-        static int height(Tree n);
+        static int height(Node n);
         static int max(int x, int y);
     protected:
 
     public:
         Tree newTree(void);
-        void rightRotation(Tree n);
-        void leftRotation(Tree n);
-        void freeTree(Tree t);
+        Node rightRotation(Node n);
+        Node leftRotation(Node n);
+        void freeTree(Node n);
 };
 
 
