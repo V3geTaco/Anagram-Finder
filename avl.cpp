@@ -4,32 +4,35 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "avl.h"
-
-#ifndef NULL_PTR
-#define NULL_PTR ((void *)0)
-
-typedef struct node *Node;
-
-struct node {
-    char *data;
-    int  height;
-    Node left;
-    Node right;
-};
-
-struct tree {
-    Node root;
-};
-
 using namespace std;
 
+#include "avl.hpp"
+
+/*static function declares*/
+static int height(Node n);
+static int max(int x, int y);
+static int getbalancefac(Node n);
+
+/*avl tree class methods*/
 Tree Avl::newTree(void) {
-   return NULL_PTR;
+   Tree t = new struct tree;
+   t->root = NULL;
+
+   return t;
+}
+
+Node Avl::newNode(char word) {
+   Node n = new struct node;
+
+   n->data = word;
+   n->left = nullptr;
+   n->right = nullptr;
+   n->height = 1;
+   return n;
 }
 
 Node Avl::rightRotation(Node n) {
-   if (n != NULL_PTR || n->left == NULL_PTR) {
+   if (n != nullptr || n->left == nullptr) {
       return n;
    }
 
@@ -44,7 +47,7 @@ Node Avl::rightRotation(Node n) {
 }
 
 Node Avl::leftRotation(Node n) {
-   if (n != NULL_PTR || n->right == NULL_PTR) {
+   if (n != nullptr || n->right == nullptr) {
       return n;
    }
 
@@ -58,24 +61,64 @@ Node Avl::leftRotation(Node n) {
    return tmp;
 }
 
+void Avl::insert(Tree t, char val) {
+   Node node = nullptr;
+   Node next = nullptr;
+   Node last = nullptr;
+
+   if (t->root == nullptr) {
+      Node n = newNode(val);
+      t->root = n;
+   } else {
+      next = t->root;
+      last = nullptr;
+
+      while (next != nullptr) {
+         last = next;
+
+         if (val < next->data) {
+            next = next->left;
+            
+         } else if (val > next->data) {
+            next = next->right;
+
+         } else if (val == next->data) {
+            next = next->left;
+
+         }
+
+         node = newNode(val);
+
+         if (val < last->data) last->left = node;
+         if (val > last->data) last->right = node;
+
+      }
+   }
+}
+
  void Avl::freeTree(Node n) {
-    if (n != NULL_PTR) {
+    if (n != nullptr) {
        freeTree(n->left);
        freeTree(n->right);
-       free(n);
+       delete n;
     }
  }
 
-int Avl::height(Node n) {
-   if (n == NULL_PTR) {
+/*static functions*/
+static int getbalancefac(Node n) {
+   if (n == nullptr) return 0;
+
+   return height(n->left) - height(n->right);
+}
+
+static int height(Node n) {
+   if (n == nullptr) {
       return -1;
    } else {
       return n->height;
    }
 }
 
-int Avl::max(int x, int y) {
+static int max(int x, int y) {
    return (x >= y) ? x : y;
 }
-
-#endif
