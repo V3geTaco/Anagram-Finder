@@ -6,14 +6,6 @@
 using namespace std;
 
 #include "avl.hpp"
-void preOrder(Node *root) {
-    if(root != nullptr)
-    {
-        cout << root->data << " ";
-        preOrder(root->left);
-        preOrder(root->right);
-    }
-}
 
 int main(int argc, char *argv[]) {
     string input_word;
