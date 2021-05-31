@@ -6,7 +6,7 @@ everything: avl
 
 avl: anagram.o avl.o
 anagram.o: anagram.cpp
-avl.o: avl.h avl.cpp
+avl.o: avl.hpp avl.cpp
 
 .PHONY: clean
 clean:
