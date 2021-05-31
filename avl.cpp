@@ -9,20 +9,14 @@ using namespace std;
 #include "avl.hpp"
 
 /*static function declares*/
-static int height(Node n);
+static int height(Node *n);
 static int max(int x, int y);
-static int getbalancefac(Node n);
+static int getbalancefac(Node *n);
 
 /*avl tree class methods*/
-Tree Avl::newTree(void) {
-   Tree t = new struct tree;
-   t->root = NULL;
 
-   return t;
-}
-
-Node Avl::newNode(char word) {
-   Node n = new struct node;
+Node *newNode(char word) {
+   Node *n = new Node();
 
    n->data = word;
    n->left = nullptr;
@@ -31,12 +25,12 @@ Node Avl::newNode(char word) {
    return n;
 }
 
-Node Avl::rightRotation(Node n) {
+Node *rightRotation(Node *n) {
    if (n != nullptr || n->left == nullptr) {
       return n;
    }
 
-   Node tmp = n->left;
+   Node *tmp = n->left;
    n->right = tmp->left;
    tmp->left = n;
 
@@ -46,12 +40,12 @@ Node Avl::rightRotation(Node n) {
    return tmp;
 }
 
-Node Avl::leftRotation(Node n) {
+Node *leftRotation(Node *n) {
    if (n != nullptr || n->right == nullptr) {
       return n;
    }
 
-   Node tmp = n->right;
+   Node *tmp = n->right;
    n->left = tmp->right;
    tmp->right = n;
 
@@ -61,57 +55,65 @@ Node Avl::leftRotation(Node n) {
    return tmp;
 }
 
-void Avl::insert(Tree t, char val) {
-   Node node = nullptr;
-   Node next = nullptr;
-   Node last = nullptr;
+Node *insert(Node *t, char val) {
+   Node *n = t;
 
-   if (t->root == nullptr) {
-      Node n = newNode(val);
-      t->root = n;
+   if (n == nullptr) return newNode(val);
+
+   if (val < n->data) {
+      n->left = insert(n->left, val);
+   } else if (val > n->data) {
+      n->right = insert(n->right, val);
    } else {
-      next = t->root;
-      last = nullptr;
+      n->left = insert(n->left, val);
+   }
 
-      while (next != nullptr) {
-         last = next;
+   n->height = 1 + max(height(n->left), height(n->right));
 
-         if (val < next->data) {
-            next = next->left;
-            
-         } else if (val > next->data) {
-            next = next->right;
+   int bal = getbalancefac(n);
 
-         } else if (val == next->data) {
-            next = next->left;
+   if (bal > 1 && val < n->left->data) return rightRotation(n);
+   if (bal > 1 && val > n->left->data) {
+      n->left = leftRotation(n->left);
+      return rightRotation(n);
+   }
 
-         }
+   if (bal < -1 && val > n->right->data) return leftRotation(n);
+   if (bal < -1 && val < n->right->data) {
+      n->right = rightRotation(n->right);
+      return leftRotation(n);
+   }
 
-         node = newNode(val);
+   return n;
+}
 
-         if (val < last->data) last->left = node;
-         if (val > last->data) last->right = node;
-
-      }
+void freeTree(Node *n) {
+   if (n != nullptr) {
+      freeTree(n->left);
+      freeTree(n->right);
+      delete n;
    }
 }
 
- void Avl::freeTree(Node n) {
-    if (n != nullptr) {
-       freeTree(n->left);
-       freeTree(n->right);
-       delete n;
-    }
- }
+bool identicalTrees(Node *n1, Node *n2) {
+   if (n1 == nullptr && n2 == nullptr) return true;
+
+   if (n1 != nullptr && n2 != nullptr) {
+      return (n1->data == n2->data && identicalTrees(n1->left, n2->left) && identicalTrees(n1->right, n2->right));
+   }
+
+   return false;
+}
+
 
 /*static functions*/
-static int getbalancefac(Node n) {
+static int getbalancefac(Node *n) {
    if (n == nullptr) return 0;
 
    return height(n->left) - height(n->right);
 }
 
-static int height(Node n) {
+static int height(Node *n) {
    if (n == nullptr) {
       return -1;
    } else {
